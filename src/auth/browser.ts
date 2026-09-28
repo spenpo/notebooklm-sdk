@@ -3,6 +3,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { type BrowserContext, chromium, type Page } from "playwright";
 import { type CookieMap, loadCookiesFromObject } from "../auth.js";
+import { NOTEBOOKLM_HOST, NOTEBOOKLM_ORIGIN } from "../constants.js";
 
 /** Default directory for storing NotebookLM session files (~/.notebooklm). */
 export const DEFAULT_SESSION_DIR = join(homedir(), ".notebooklm");
@@ -26,7 +27,7 @@ export interface LoginOptions {
   headless?: boolean;
 }
 
-const NOTEBOOKLM_URL = "https://notebooklm.google.com/";
+const NOTEBOOKLM_URL = `${NOTEBOOKLM_ORIGIN}/`;
 const GOOGLE_ACCOUNTS_URL = "https://accounts.google.com/";
 
 /**
@@ -81,10 +82,10 @@ export async function login(opts: LoginOptions = {}): Promise<{
     console.log("Please log in to Google in the browser window...");
 
     // Wait for navigation back to NotebookLM or successful login indicator
-    // We poll until the URL includes notebooklm.google.com and it's not a generic landing page
+    // We poll until the URL is on the current NotebookLM host and it's not a login page
     await page.waitForURL(
       (url) => {
-        return url.hostname === "notebooklm.google.com" && !url.pathname.includes("/login");
+        return url.hostname === NOTEBOOKLM_HOST && !url.pathname.includes("/login");
       },
       { timeout: 0 },
     ); // No timeout, wait for user
