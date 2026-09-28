@@ -119,9 +119,11 @@ describe("fetchTokens", () => {
   });
 
   it("requests the current NotebookLM origin", async () => {
-    const fetchMock = vi.fn().mockResolvedValue(
-      new Response('"SNlM0e":"csrf-token","FdrFJe":"session-id"', { status: 200 }),
-    );
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        new Response('"SNlM0e":"csrf-token","FdrFJe":"session-id"', { status: 200 }),
+      );
     vi.stubGlobal("fetch", fetchMock);
 
     const result = await fetchTokens({ SID: "abc" });
